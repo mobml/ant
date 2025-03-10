@@ -1,16 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"github.com/mobml/ant/cmd"
+)
 
 func main() {
-	var input string
-	loadTasks()
-	fmt.Println("Ingresa tu tarea")
-	fmt.Scan(&input)
-	addTask(input)
-	listTasks()
-	deleteTask(1)
-	listTasks()
-	completeTask(3)
-	listTasks()
+	cmd.Execute()
 }

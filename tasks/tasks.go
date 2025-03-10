@@ -1,4 +1,4 @@
-package main
+package tasks
 
 import (
 	"encoding/json"
@@ -15,7 +15,7 @@ type Task struct {
 var tasks []Task
 var TaskID int
 
-func loadTasks() error {
+func LoadTasks() error {
 	file, err := os.Open("tasks.json")
 
 	if err != nil {
@@ -49,7 +49,7 @@ func saveTasks() error {
 	return err
 }
 
-func addTask(description string) {
+func AddTask(description string) {
 	TaskID++
 	newTask := Task{
 		ID:          TaskID,
@@ -58,12 +58,13 @@ func addTask(description string) {
 	}
 
 	tasks = append(tasks, newTask)
+	fmt.Printf("Task '%s' has been added", newTask.Description)
 	saveTasks()
 }
 
-func listTasks() {
+func ListTasks() {
 	if len(tasks) == 0 {
-		fmt.Println("No hay tareas que mostrar")
+		fmt.Println("No tasks to show")
 	}
 
 	for _, task := range tasks {
@@ -72,7 +73,7 @@ func listTasks() {
 	}
 }
 
-func deleteTask(id int) {
+func DeleteTask(id int) {
 	for i, task := range tasks {
 		if task.ID == id {
 			tasks = append(tasks[:i], tasks[i+1:]...)
@@ -84,9 +85,9 @@ func deleteTask(id int) {
 	fmt.Printf("Task not founded\n")
 }
 
-func completeTask(id int) {
+func CompleteTask(id int) {
 	for i, task := range tasks {
-		if task.ID == id  {
+		if task.ID == id {
 			tasks[i].Completed = true
 			saveTasks()
 			fmt.Printf("Task '%s' marked as completed\n", task.Description)
