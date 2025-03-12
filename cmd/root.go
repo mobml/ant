@@ -18,7 +18,7 @@ var rootCmd = &cobra.Command{
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Welcome to Ant! use --help to see available commands.")
+		fmt.Println("Welcome to Ant! \nuse --help to see available commands.")
 	},
 }
 

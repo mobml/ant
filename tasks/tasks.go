@@ -3,6 +3,7 @@ package tasks
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/mobml/ant/utils"
 	"os"
 )
 
@@ -16,7 +17,14 @@ var tasks []Task
 var TaskID int
 
 func LoadTasks() error {
-	file, err := os.Open("tasks.json")
+
+	path, err := utils.GetPath("tasks.json")
+
+	if err != nil {
+		return err
+	}
+
+	file, err := os.Open(path)
 
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -36,7 +44,12 @@ func LoadTasks() error {
 }
 
 func saveTasks() error {
-	file, err := os.Create("tasks.json")
+	path, err := utils.GetPath("tasks.json")
+
+	if err != nil {
+		return err
+	}
+	file, err := os.Create(path)
 
 	if err != nil {
 		return err
