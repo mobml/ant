@@ -2,21 +2,13 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/mobml/ant/tasks"
 	"github.com/spf13/cobra"
 	"os"
 )
 
 var rootCmd = &cobra.Command{
 	Use:   "ant",
-	Short: "A CLI task manager tool written in Go",
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		err := tasks.LoadTasks()
-
-		if err != nil {
-			fmt.Println("Error loading tasks: ", err)
-		}
-	},
+	Short: "A CLI tool for personal productivity and growth written in Go",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Welcome to Ant! \nuse --help to see available commands.")
 	},
