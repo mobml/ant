@@ -15,7 +15,7 @@ func main() {
 	defer database.CloseDB()
 
 	if err := database.Migrate(database.DB()); err != nil {
-		log.Fatal("Migration failed:", err)
+		log.Fatal(err)
 	}
 
 	cmd.Execute()
