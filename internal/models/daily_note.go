@@ -1,12 +1,11 @@
 package models
 
 import (
-	"github.com/google/uuid"
 	"time"
 )
 
 type DailyNote struct {
-	ID        uuid.UUID
+	ID        string
 	NoteDate  time.Time
 	Content   string
 	CreatedAt time.Time

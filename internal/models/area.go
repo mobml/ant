@@ -1,13 +1,12 @@
 package models
 
 import (
-	"github.com/google/uuid"
 	"time"
 )
 
 type Area struct {
-	ID          uuid.UUID
-	PlanID      uuid.UUID
+	ID          string
+	PlanID      string
 	Name        string
 	Description string
 	CreatedAt   time.Time

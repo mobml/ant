@@ -1,13 +1,12 @@
 package models
 
 import (
-	"github.com/google/uuid"
 	"time"
 )
 
 type HabitSchedule struct {
-	ID        uuid.UUID
-	HabitID   uuid.UUID
+	ID        string
+	HabitID   string
 	DayOfWeek int
 	CreatedAt time.Time
 	UpdatedAt time.Time

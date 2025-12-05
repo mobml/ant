@@ -1,12 +1,11 @@
 package models
 
 import (
-	"github.com/google/uuid"
 	"time"
 )
 
 type WeeklyReport struct {
-	ID          uuid.UUID
+	ID          string
 	PlanID      string
 	WeekStart   time.Time
 	WeekEnd     time.Time

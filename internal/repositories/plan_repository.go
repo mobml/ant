@@ -3,16 +3,15 @@ package repositories
 import (
 	"database/sql"
 	"fmt"
-	"github.com/google/uuid"
 	"github.com/mobml/ant/internal/models"
 )
 
 type PlanRepository interface {
 	Create(plan *models.Plan) error
 	List() ([]*models.Plan, error)
-	FindByID(id uuid.UUID) (*models.Plan, error)
+	FindByID(id string) (*models.Plan, error)
 	Update(p *models.Plan) error
-	Delete(id uuid.UUID) error
+	Delete(id string) error
 }
 
 type planRepository struct {
@@ -81,7 +80,7 @@ func (r *planRepository) List() ([]*models.Plan, error) {
 	return plans, nil
 }
 
-func (r *planRepository) FindByID(id uuid.UUID) (*models.Plan, error) {
+func (r *planRepository) FindByID(id string) (*models.Plan, error) {
 	query := "SELECT * from plans WHERE id = ?"
 
 	row := r.db.QueryRow(query, id)
@@ -114,7 +113,7 @@ func (r *planRepository) FindByID(id uuid.UUID) (*models.Plan, error) {
 func (r *planRepository) Update(p *models.Plan) error {
 	query := `
 		UPDATE plans 
-		SET name = ?, description = ?, duration = ?, updated_at = ? 
+		SET name = ?, description = ?, start_date = ?, duration = ?, updated_at = ? 
 		WHERE id = ?
 	`
 
@@ -134,7 +133,7 @@ func (r *planRepository) Update(p *models.Plan) error {
 	return nil
 }
 
-func (r *planRepository) Delete(id uuid.UUID) error {
+func (r *planRepository) Delete(id string) error {
 	query := `DELETE FROM plans WHERE id = ?`
 
 	_, err := r.db.Exec(query, id)

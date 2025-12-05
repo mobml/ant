@@ -1,13 +1,12 @@
 package models
 
 import (
-	"github.com/google/uuid"
 	"time"
 )
 
 type Habit struct {
-	ID          uuid.UUID
-	GoalID      uuid.UUID
+	ID          string
+	GoalID      string
 	Name        string
 	Description string
 	MeasureType MeasureType

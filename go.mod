@@ -2,9 +2,13 @@ module github.com/mobml/ant
 
 go 1.24
 
-require github.com/spf13/cobra v1.9.1
+require (
+	github.com/duckdb/duckdb-go/v2 v2.5.3
+	github.com/spf13/cobra v1.9.1
+)
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.2 // indirect
 	github.com/apache/arrow-go/v18 v18.4.1 // indirect
 	github.com/duckdb/duckdb-go-bindings v0.1.23 // indirect
 	github.com/duckdb/duckdb-go-bindings/darwin-amd64 v0.1.23 // indirect
@@ -14,7 +18,6 @@ require (
 	github.com/duckdb/duckdb-go-bindings/windows-amd64 v0.1.23 // indirect
 	github.com/duckdb/duckdb-go/arrowmapping v0.0.26 // indirect
 	github.com/duckdb/duckdb-go/mapping v0.0.25 // indirect
-	github.com/duckdb/duckdb-go/v2 v2.5.3 // indirect
 	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
 	github.com/google/flatbuffers v25.2.10+incompatible // indirect
