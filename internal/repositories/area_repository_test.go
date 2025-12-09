@@ -20,21 +20,17 @@ func TestAreaRepository_Create(t *testing.T) {
 		PlanID:      "plan1",
 		Name:        "Area 1",
 		Description: "Desc",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
 	}
 
 	mock.ExpectExec(regexp.QuoteMeta(`
-		INSERT INTO areas (id, plan_id, name, description, created_at, updated_at)
-		VALUES (?, ?, ?, ?, ?, ?)
+		INSERT INTO areas (id, plan_id, name, description)
+		VALUES (?, ?, ?, ?)
 	`)).
 		WithArgs(
 			a.ID,
 			a.PlanID,
 			a.Name,
 			a.Description,
-			a.CreatedAt,
-			a.UpdatedAt,
 		).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -110,7 +106,6 @@ func TestAreaRepository_Update(t *testing.T) {
 		PlanID:      "planUpdated",
 		Name:        "Updated Area",
 		Description: "Updated Desc",
-		UpdatedAt:   time.Now(),
 	}
 
 	mock.ExpectExec("UPDATE areas").
@@ -118,7 +113,7 @@ func TestAreaRepository_Update(t *testing.T) {
 			a.PlanID,
 			a.Name,
 			a.Description,
-			a.UpdatedAt,
+			sqlmock.AnyArg(),
 			a.ID,
 		).
 		WillReturnResult(sqlmock.NewResult(1, 1))

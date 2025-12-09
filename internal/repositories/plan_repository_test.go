@@ -21,13 +21,11 @@ func TestPlanRepository_Create(t *testing.T) {
 		Description: "Desc",
 		StartDate:   time.Now(),
 		Duration:    30,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
 	}
 
 	mock.ExpectExec(regexp.QuoteMeta(`
-		INSERT INTO plans (id, name, description, start_date, duration, created_at, updated_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?)
+		INSERT INTO plans (id, name, description, start_date, duration)
+		VALUES (?, ?, ?, ?, ?)
 	`)).
 		WithArgs(
 			p.ID,
@@ -35,8 +33,6 @@ func TestPlanRepository_Create(t *testing.T) {
 			p.Description,
 			p.StartDate,
 			p.Duration,
-			p.CreatedAt,
-			p.UpdatedAt,
 		).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -114,7 +110,6 @@ func TestPlanRepository_Update(t *testing.T) {
 		Description: "Updated Desc",
 		StartDate:   time.Now(),
 		Duration:    40,
-		UpdatedAt:   time.Now(),
 	}
 
 	mock.ExpectExec("UPDATE plans").
@@ -123,7 +118,7 @@ func TestPlanRepository_Update(t *testing.T) {
 			p.Description,
 			p.StartDate,
 			p.Duration,
-			p.UpdatedAt,
+			sqlmock.AnyArg(),
 			p.ID,
 		).
 		WillReturnResult(sqlmock.NewResult(1, 1))
@@ -151,4 +146,3 @@ func TestPlanRepository_Delete(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
-

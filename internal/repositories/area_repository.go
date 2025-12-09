@@ -3,6 +3,7 @@ package repositories
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/mobml/ant/internal/models"
 )
@@ -25,8 +26,8 @@ func NewAreaRepository(db *sql.DB) AreaRepository {
 
 func (r *areaRepository) Create(a *models.Area) error {
 	query := `
-		INSERT INTO areas (id, plan_id, name, description, created_at, updated_at)
-		VALUES (?, ?, ?, ?, ?, ?)
+		INSERT INTO areas (id, plan_id, name, description)
+		VALUES (?, ?, ?, ?)
 	`
 
 	_, err := r.db.Exec(
@@ -35,8 +36,6 @@ func (r *areaRepository) Create(a *models.Area) error {
 		a.PlanID,
 		a.Name,
 		a.Description,
-		a.CreatedAt,
-		a.UpdatedAt,
 	)
 
 	if err != nil {
@@ -117,7 +116,7 @@ func (r *areaRepository) Update(a *models.Area) error {
 		a.PlanID,
 		a.Name,
 		a.Description,
-		a.UpdatedAt,
+		time.Now(),
 		a.ID,
 	)
 

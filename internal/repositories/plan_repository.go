@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/mobml/ant/internal/models"
+	"time"
 )
 
 type PlanRepository interface {
@@ -24,8 +25,8 @@ func NewPlanRepository(db *sql.DB) PlanRepository {
 
 func (r *planRepository) Create(p *models.Plan) error {
 	query := `
-		INSERT INTO plans (id, name, description, start_date, duration, created_at, updated_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?)
+		INSERT INTO plans (id, name, description, start_date, duration)
+		VALUES (?, ?, ?, ?, ?)
 	`
 	_, err := r.db.Exec(
 		query,
@@ -34,8 +35,6 @@ func (r *planRepository) Create(p *models.Plan) error {
 		p.Description,
 		p.StartDate,
 		p.Duration,
-		p.CreatedAt,
-		p.UpdatedAt,
 	)
 
 	if err != nil {
@@ -123,7 +122,7 @@ func (r *planRepository) Update(p *models.Plan) error {
 		p.Description,
 		p.StartDate,
 		p.Duration,
-		p.UpdatedAt,
+		time.Now(),
 		p.ID,
 	)
 
