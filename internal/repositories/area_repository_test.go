@@ -16,7 +16,6 @@ func TestAreaRepository_Create(t *testing.T) {
 	repo := NewAreaRepository(db)
 
 	a := &models.Area{
-		ID:          "area1",
 		PlanID:      "plan1",
 		Name:        "Area 1",
 		Description: "Desc",
@@ -27,7 +26,7 @@ func TestAreaRepository_Create(t *testing.T) {
 		VALUES (?, ?, ?, ?)
 	`)).
 		WithArgs(
-			a.ID,
+			sqlmock.AnyArg(),
 			a.PlanID,
 			a.Name,
 			a.Description,
