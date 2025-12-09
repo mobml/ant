@@ -16,7 +16,6 @@ func TestHabitLogRepository_Create(t *testing.T) {
 	repo := NewHabitLogRepository(db)
 
 	h := &models.HabitLog{
-		ID:        "log1",
 		HabitID:   "habit1",
 		LogDate:   time.Now(),
 		Value:     5.5,
@@ -30,7 +29,7 @@ func TestHabitLogRepository_Create(t *testing.T) {
         VALUES (?, ?, ?, ?, ?, ?, ?)
     `)).
 		WithArgs(
-			h.ID,
+			sqlmock.AnyArg(),
 			h.HabitID,
 			h.LogDate,
 			h.Value,

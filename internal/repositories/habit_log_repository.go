@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/matoous/go-nanoid/v2"
 	"github.com/mobml/ant/internal/models"
 )
 
@@ -29,9 +30,15 @@ func (r *habitLogRepository) Create(h *models.HabitLog) error {
         INSERT INTO habit_logs (id, habit_id, log_date, value, note, created_at, updated_at)
         VALUES (?, ?, ?, ?, ?, ?, ?)
     `
-	_, err := r.db.Exec(
+	id, err := gonanoid.New(8)
+
+	if err != nil {
+		return fmt.Errorf("failed to create id")
+	}
+
+	_, err = r.db.Exec(
 		query,
-		h.ID,
+		id,
 		h.HabitID,
 		h.LogDate,
 		h.Value,
