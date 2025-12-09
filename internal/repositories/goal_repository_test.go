@@ -16,7 +16,6 @@ func TestGoalRepository_Create(t *testing.T) {
 	repo := NewGoalRepository(db)
 
 	g := &models.Goal{
-		ID:          "goal1",
 		AreaID:      "area1",
 		Name:        "My Goal",
 		Description: "Desc",
@@ -29,7 +28,7 @@ func TestGoalRepository_Create(t *testing.T) {
 		VALUES (?, ?, ?, ?, ?, ?)
 	`)).
 		WithArgs(
-			g.ID,
+			sqlmock.AnyArg(),
 			g.AreaID,
 			g.Name,
 			g.Description,

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	gonanoid "github.com/matoous/go-nanoid/v2"
 	"github.com/mobml/ant/internal/models"
 )
 
@@ -28,10 +29,15 @@ func (r *goalRepository) Create(g *models.Goal) error {
 		INSERT INTO goals (id, area_id, name, description, created_at, updated_at)
 		VALUES (?, ?, ?, ?, ?, ?)
 	`
+	id, err := gonanoid.New(8)
 
-	_, err := r.db.Exec(
+	if err != nil {
+		return fmt.Errorf("failed to create id")
+	}
+
+	_, err = r.db.Exec(
 		query,
-		g.ID,
+		id,
 		g.AreaID,
 		g.Name,
 		g.Description,
