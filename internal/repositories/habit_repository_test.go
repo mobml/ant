@@ -21,13 +21,11 @@ func TestHabitRepository_Create(t *testing.T) {
 		Description: "8 glasses a day",
 		MeasureType: models.MeasureInteger,
 		MeasureUnit: "glasses",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
 	}
 
 	mock.ExpectExec(regexp.QuoteMeta(`
-		INSERT INTO habits (id, goal_id, name, description, measure_type, measure_unit, created_at, updated_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+		INSERT INTO habits (id, goal_id, name, description, measure_type, measure_unit)
+		VALUES (?, ?, ?, ?, ?, ?)
 	`)).
 		WithArgs(
 			sqlmock.AnyArg(),
@@ -36,8 +34,6 @@ func TestHabitRepository_Create(t *testing.T) {
 			h.Description,
 			h.MeasureType,
 			h.MeasureUnit,
-			h.CreatedAt,
-			h.UpdatedAt,
 		).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -113,7 +109,6 @@ func TestHabitRepository_Update(t *testing.T) {
 		Description: "Updated Desc",
 		MeasureType: models.MeasureHours,
 		MeasureUnit: "hours",
-		UpdatedAt:   time.Now(),
 	}
 
 	mock.ExpectExec("UPDATE habits").
@@ -123,7 +118,7 @@ func TestHabitRepository_Update(t *testing.T) {
 			h.Description,
 			h.MeasureType,
 			h.MeasureUnit,
-			h.UpdatedAt,
+			sqlmock.AnyArg(),
 			h.ID,
 		).
 		WillReturnResult(sqlmock.NewResult(1, 1))

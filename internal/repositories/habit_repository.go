@@ -3,6 +3,7 @@ package repositories
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"github.com/mobml/ant/internal/models"
@@ -26,8 +27,8 @@ func NewHabitRepository(db *sql.DB) HabitRepository {
 
 func (r *habitRepository) Create(h *models.Habit) error {
 	query := `
-		INSERT INTO habits (id, goal_id, name, description, measure_type, measure_unit, created_at, updated_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+		INSERT INTO habits (id, goal_id, name, description, measure_type, measure_unit)
+		VALUES (?, ?, ?, ?, ?, ?)
 	`
 
 	id, err := gonanoid.New(8)
@@ -44,8 +45,6 @@ func (r *habitRepository) Create(h *models.Habit) error {
 		h.Description,
 		h.MeasureType,
 		h.MeasureUnit,
-		h.CreatedAt,
-		h.UpdatedAt,
 	)
 
 	if err != nil {
@@ -133,7 +132,7 @@ func (r *habitRepository) Update(h *models.Habit) error {
 		h.Description,
 		h.MeasureType,
 		h.MeasureUnit,
-		h.UpdatedAt,
+		time.Now(),
 		h.ID,
 	)
 
