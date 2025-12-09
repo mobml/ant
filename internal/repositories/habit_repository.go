@@ -3,6 +3,8 @@ package repositories
 import (
 	"database/sql"
 	"fmt"
+
+	gonanoid "github.com/matoous/go-nanoid/v2"
 	"github.com/mobml/ant/internal/models"
 )
 
@@ -28,9 +30,15 @@ func (r *habitRepository) Create(h *models.Habit) error {
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 	`
 
-	_, err := r.db.Exec(
+	id, err := gonanoid.New(8)
+
+	if err != nil {
+		return fmt.Errorf("failed to create id")
+	}
+
+	_, err = r.db.Exec(
 		query,
-		h.ID,
+		id,
 		h.GoalID,
 		h.Name,
 		h.Description,
