@@ -16,7 +16,6 @@ func TestPlanRepository_Create(t *testing.T) {
 	repo := NewPlanRepository(db)
 
 	p := &models.Plan{
-		ID:          "abc123",
 		Name:        "My Plan",
 		Description: "Desc",
 		StartDate:   time.Now(),
@@ -28,7 +27,7 @@ func TestPlanRepository_Create(t *testing.T) {
 		VALUES (?, ?, ?, ?, ?)
 	`)).
 		WithArgs(
-			p.ID,
+			sqlmock.AnyArg(),
 			p.Name,
 			p.Description,
 			p.StartDate,

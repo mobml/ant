@@ -3,6 +3,7 @@ package repositories
 import (
 	"database/sql"
 	"fmt"
+	"github.com/matoous/go-nanoid/v2"
 	"github.com/mobml/ant/internal/models"
 	"time"
 )
@@ -28,9 +29,14 @@ func (r *planRepository) Create(p *models.Plan) error {
 		INSERT INTO plans (id, name, description, start_date, duration)
 		VALUES (?, ?, ?, ?, ?)
 	`
-	_, err := r.db.Exec(
+	id, err := gonanoid.New(8)
+
+	if err != nil {
+		return fmt.Errorf("failed to create id")
+	}
+	_, err = r.db.Exec(
 		query,
-		p.ID,
+		id,
 		p.Name,
 		p.Description,
 		p.StartDate,
