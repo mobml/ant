@@ -3,6 +3,7 @@ package repositories
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/matoous/go-nanoid/v2"
 	"github.com/mobml/ant/internal/models"
@@ -27,8 +28,8 @@ func NewHabitLogRepository(db *sql.DB) HabitLogRepository {
 
 func (r *habitLogRepository) Create(h *models.HabitLog) error {
 	query := `
-        INSERT INTO habit_logs (id, habit_id, log_date, value, note, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO habit_logs (id, habit_id, log_date, value, note)
+        VALUES (?, ?, ?, ?, ?)
     `
 	id, err := gonanoid.New(8)
 
@@ -40,11 +41,9 @@ func (r *habitLogRepository) Create(h *models.HabitLog) error {
 		query,
 		id,
 		h.HabitID,
-		h.LogDate,
+		time.Now(),
 		h.Value,
 		h.Note,
-		h.CreatedAt,
-		h.UpdatedAt,
 	)
 
 	if err != nil {
@@ -166,7 +165,7 @@ func (r *habitLogRepository) Update(h *models.HabitLog) error {
 		query,
 		h.Value,
 		h.Note,
-		h.UpdatedAt,
+		time.Now(),
 		h.ID,
 	)
 

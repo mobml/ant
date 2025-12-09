@@ -16,26 +16,21 @@ func TestHabitLogRepository_Create(t *testing.T) {
 	repo := NewHabitLogRepository(db)
 
 	h := &models.HabitLog{
-		HabitID:   "habit1",
-		LogDate:   time.Now(),
-		Value:     5.5,
-		Note:      "Good day",
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		HabitID: "habit1",
+		Value:   5.5,
+		Note:    "Good day",
 	}
 
 	mock.ExpectExec(regexp.QuoteMeta(`
-        INSERT INTO habit_logs (id, habit_id, log_date, value, note, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO habit_logs (id, habit_id, log_date, value, note)
+        VALUES (?, ?, ?, ?, ?)
     `)).
 		WithArgs(
 			sqlmock.AnyArg(),
 			h.HabitID,
-			h.LogDate,
+			sqlmock.AnyArg(),
 			h.Value,
 			h.Note,
-			h.CreatedAt,
-			h.UpdatedAt,
 		).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -136,19 +131,17 @@ func TestHabitLogRepository_Update(t *testing.T) {
 	repo := NewHabitLogRepository(db)
 
 	h := &models.HabitLog{
-		ID:        "log1",
-		HabitID:   "habitUpdated",
-		LogDate:   time.Now(),
-		Value:     10.0,
-		Note:      "Updated note",
-		UpdatedAt: time.Now(),
+		ID:      "1",
+		HabitID: "habitUpdated",
+		Value:   10.0,
+		Note:    "Updated note",
 	}
 
 	mock.ExpectExec("UPDATE habit_logs").
 		WithArgs(
 			h.Value,
 			h.Note,
-			h.UpdatedAt,
+			sqlmock.AnyArg(),
 			h.ID,
 		).
 		WillReturnResult(sqlmock.NewResult(1, 1))
