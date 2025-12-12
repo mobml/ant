@@ -7,6 +7,9 @@ import (
 
 type PlanService interface {
 	CreatePlan(plan *models.Plan) error
+	ListPlans() ([]*models.Plan, error)
+	UpdatePlan(plan *models.Plan) error
+	DeletePlan(id string) error
 }
 
 type planService struct {
