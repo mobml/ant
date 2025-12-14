@@ -1,6 +1,8 @@
 package plan
 
 import (
+	dc "github.com/mobml/ant/internal/domain/common"
+	dp "github.com/mobml/ant/internal/domain/plan"
 	"github.com/mobml/ant/internal/models"
 	repo "github.com/mobml/ant/internal/repositories"
 )
@@ -24,7 +26,7 @@ func NewPlanService(planRepo repo.PlanRepository) PlanService {
 
 func (ps *planService) CreatePlan(plan *models.Plan) error {
 
-	if err := validatePlan(plan); err != nil {
+	if err := dp.ValidatePlan(plan); err != nil {
 		return err
 	}
 
@@ -37,11 +39,11 @@ func (ps *planService) ListPlans() ([]*models.Plan, error) {
 
 func (ps *planService) UpdatePlan(plan *models.Plan) error {
 
-	if err := validatePlan(plan); err != nil {
+	if err := dp.ValidatePlan(plan); err != nil {
 		return err
 	}
 
-	if err := validateID(plan.ID); err != nil {
+	if err := dc.ValidateID(plan.ID); err != nil {
 		return err
 	}
 
@@ -50,7 +52,7 @@ func (ps *planService) UpdatePlan(plan *models.Plan) error {
 
 func (ps *planService) DeletePlan(id string) error {
 
-	if err := validateID(id); err != nil {
+	if err := dc.ValidateID(id); err != nil {
 		return err
 	}
 	return ps.planRepo.Delete(id)

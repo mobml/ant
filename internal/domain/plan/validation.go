@@ -3,12 +3,13 @@ package plan
 import (
 	"time"
 
+	"github.com/mobml/ant/internal/domain/common"
 	"github.com/mobml/ant/internal/models"
 )
 
-func validatePlan(p *models.Plan) error {
+func ValidatePlan(p *models.Plan) error {
 	if p.Name == "" {
-		return ErrNameRequired
+		return common.ErrIDRequired
 	}
 	if p.Duration <= 0 {
 		return ErrDurationInvalid
@@ -20,12 +21,5 @@ func validatePlan(p *models.Plan) error {
 		return ErrStartDatePast
 	}
 
-	return nil
-}
-
-func validateID(id string) error {
-	if id == "" {
-		return ErrIDRequired
-	}
 	return nil
 }
