@@ -94,6 +94,33 @@ func TestAreaRepository_FindByID(t *testing.T) {
 	}
 }
 
+func TestAreaRepository_ListByPlanID(t *testing.T) {
+	db, mock, _ := sqlmock.New()
+	defer db.Close()
+	
+	repo := NewAreaRepository(db)
+	rows := sqlmock.NewRows([]string{
+		"id", "plan_id", "name", "description", "created_at", "updated_at",
+	}).AddRow(
+		"area1", "plan1", "Area 1", "Desc 1", time.Now(), time.Now(),
+	).AddRow(
+		"area2", "plan1", "Area 2", "Desc 2", time.Now(), time.Now(),
+	)
+	
+	mock.ExpectQuery("SELECT \\* FROM areas WHERE plan_id = \\?").
+		WithArgs("plan1").
+		WillReturnRows(rows)
+			
+	areas, err := repo.ListByPlan("plan1")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	
+	if len(areas) != 2 {
+		t.Fatalf("expected 2 areas, got %d", len(areas))
+	}
+}
+
 func TestAreaRepository_Update(t *testing.T) {
 	db, mock, _ := sqlmock.New()
 	defer db.Close()

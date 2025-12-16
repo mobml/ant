@@ -13,6 +13,7 @@ type AreaRepository interface {
 	Create(area *models.Area) error
 	List() ([]*models.Area, error)
 	FindByID(id string) (*models.Area, error)
+	ListByPlan(planID string) ([]*models.Area, error)
 	Update(area *models.Area) error
 	Delete(id string) error
 }
@@ -108,6 +109,39 @@ func (r *areaRepository) FindByID(id string) (*models.Area, error) {
 	}
 
 	return &a, nil
+}
+
+//write a method that lists areas by plan id
+func (r *areaRepository) ListByPlan(planID string) ([]*models.Area, error) {
+	query := "SELECT * FROM areas WHERE plan_id = ?;"
+	
+	rows, err := r.db.Query(query, planID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list areas by plan: %w", err)
+	}
+	defer rows.Close()
+	
+	var areas []*models.Area
+	for rows.Next() {
+		var a models.Area
+		if err := rows.Scan(
+			&a.ID,
+			&a.PlanID,
+			&a.Name,
+			&a.Description,
+			&a.CreatedAt,
+			&a.UpdatedAt,
+		); err != nil {
+			return nil, fmt.Errorf("failed to scan area: %w", err)
+		}
+		areas = append(areas, &a)
+	}
+	
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("rows iteration error: %w", err)
+	}
+	
+	return areas, nil
 }
 
 func (r *areaRepository) Update(a *models.Area) error {
