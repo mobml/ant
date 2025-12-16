@@ -13,6 +13,7 @@ type GoalRepository interface {
 	Create(goal *models.Goal) error
 	List() ([]*models.Goal, error)
 	FindByID(id string) (*models.Goal, error)
+	ListByArea(areaID string) ([]*models.Goal, error)
 	Update(goal *models.Goal) error
 	Delete(id string) error
 }
@@ -108,6 +109,42 @@ func (r *goalRepository) FindByID(id string) (*models.Goal, error) {
 	}
 
 	return &g, nil
+}
+
+// wirte ListByArea
+func (r *goalRepository) ListByArea(areaID string) ([]*models.Goal, error) {
+	query := "SELECT * FROM goals WHERE area_id = ?;"
+
+	rows, err := r.db.Query(query, areaID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list goals by area: %w", err)
+	}
+	defer rows.Close()
+
+	var goals []*models.Goal
+
+	for rows.Next() {
+		var g models.Goal
+
+		if err := rows.Scan(
+			&g.ID,
+			&g.AreaID,
+			&g.Name,
+			&g.Description,
+			&g.CreatedAt,
+			&g.UpdatedAt,
+		); err != nil {
+			return nil, fmt.Errorf("failed scanning goal: %w", err)
+		}
+
+		goals = append(goals, &g)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("row iteration failed: %w", err)
+	}
+
+	return goals, nil
 }
 
 func (r *goalRepository) Update(g *models.Goal) error {
