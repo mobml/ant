@@ -18,5 +18,6 @@ func main() {
 		log.Fatal(err)
 	}
 
+	cmd.InitServices()
 	cmd.Execute()
 }
