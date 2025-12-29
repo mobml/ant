@@ -10,6 +10,7 @@ import (
 type PlanService interface {
 	CreatePlan(plan *models.Plan) error
 	ListPlans() ([]*models.Plan, error)
+	GetPlanByID(id string) (*models.Plan, error)
 	UpdatePlan(plan *models.Plan) error
 	DeletePlan(id string) error
 }
@@ -35,6 +36,15 @@ func (ps *planService) CreatePlan(plan *models.Plan) error {
 
 func (ps *planService) ListPlans() ([]*models.Plan, error) {
 	return ps.planRepo.List()
+}
+
+func (ps *planService) GetPlanByID(id string) (*models.Plan, error) {
+
+	if err := dc.ValidateID(id); err != nil {
+		return nil, err
+	}
+
+	return ps.planRepo.FindByID(id)
 }
 
 func (ps *planService) UpdatePlan(plan *models.Plan) error {

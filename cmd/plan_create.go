@@ -25,7 +25,9 @@ func runPlanCreatecmd(cmd *cobra.Command, args []string) error {
 	if wizard.NeedsPlanWizard(plan) {
 		fmt.Println("Some required fields are missing. Launching interactive wizard...")
 
-		return wizard.PlanWizard(plan)
+		if err := wizard.PlanWizard(plan); err != nil {
+			return err
+		}
 	}
 
 	return PlanService.CreatePlan(plan)
