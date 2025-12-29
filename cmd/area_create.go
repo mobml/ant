@@ -51,7 +51,7 @@ func bindAreaFlags(cmd *cobra.Command, area *models.Area) error {
 
 func init() {
 	areaCmd.AddCommand(areaCreateCmd)
-	areaCreateCmd.Flags().String("name", "n", "Name of the area")
-	areaCreateCmd.Flags().String("plan-id", "p", "ID of the associated plan")
-	areaCreateCmd.Flags().String("description", "d", "Description of the area (optional)")
+	areaCreateCmd.Flags().StringP("name", "n", "", "Name of the area")
+	areaCreateCmd.Flags().StringP("plan-id", "p", "", "ID of the associated plan")
+	areaCreateCmd.Flags().StringP("description", "d", "", "Description of the area (optional)")
 }
