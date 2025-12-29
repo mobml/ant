@@ -10,6 +10,7 @@ import (
 type AreaService interface {
 	CreateArea(area *models.Area) error
 	ListAreasByPlan(planID string) ([]*models.Area, error)
+	GetAreaByID(id string) (*models.Area, error)
 	UpdateArea(area *models.Area) error
 	DeleteArea(id string) error
 }
@@ -29,6 +30,13 @@ func (s *areaService) CreateArea(area *models.Area) error {
 		return err
 	}
 	return s.areaRepo.Create(area)
+}
+
+func (s *areaService) GetAreaByID(id string) (*models.Area, error) {
+	if err := dc.ValidateID(id); err != nil {
+		return nil, err
+	}
+	return s.areaRepo.FindByID(id)
 }
 
 func (s *areaService) ListAreasByPlan(planID string) ([]*models.Area, error) {

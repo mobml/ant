@@ -111,16 +111,15 @@ func (r *areaRepository) FindByID(id string) (*models.Area, error) {
 	return &a, nil
 }
 
-//write a method that lists areas by plan id
 func (r *areaRepository) ListByPlan(planID string) ([]*models.Area, error) {
 	query := "SELECT * FROM areas WHERE plan_id = ?;"
-	
+
 	rows, err := r.db.Query(query, planID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to list areas by plan: %w", err)
 	}
 	defer rows.Close()
-	
+
 	var areas []*models.Area
 	for rows.Next() {
 		var a models.Area
@@ -136,11 +135,11 @@ func (r *areaRepository) ListByPlan(planID string) ([]*models.Area, error) {
 		}
 		areas = append(areas, &a)
 	}
-	
+
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("rows iteration error: %w", err)
 	}
-	
+
 	return areas, nil
 }
 

@@ -12,11 +12,7 @@ var areaDeleteCmd = &cobra.Command{
 }
 
 func runAreaDeleteCmd(cmd *cobra.Command, args []string) error {
-	areaID, err := cmd.Flags().GetString("id")
-	if err != nil {
-		return err
-	}
-
+	areaID := args[0]
 	return AreaService.DeleteArea(areaID)
 }
 
