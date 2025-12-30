@@ -4,13 +4,17 @@ import (
 	"github.com/mobml/ant/database"
 	"github.com/mobml/ant/internal/repositories"
 
-	pa "github.com/mobml/ant/internal/services/area"
+	as "github.com/mobml/ant/internal/services/area"
+	gs "github.com/mobml/ant/internal/services/goal"
+	hs "github.com/mobml/ant/internal/services/habit"
 	ps "github.com/mobml/ant/internal/services/plan"
 )
 
 var (
-	PlanService ps.PlanService
-	AreaService pa.AreaService
+	PlanService  ps.PlanService
+	AreaService  as.AreaService
+	GoalService  gs.GoalService
+	HabitService hs.HabitService
 )
 
 func InitServices() {
@@ -20,7 +24,15 @@ func InitServices() {
 		repositories.NewPlanRepository(db),
 	)
 
-	AreaService = pa.NewAreaService(
+	AreaService = as.NewAreaService(
 		repositories.NewAreaRepository(db),
+	)
+
+	GoalService = gs.NewGoalService(
+		repositories.NewGoalRepository(db),
+	)
+
+	HabitService = hs.NewHabitService(
+		repositories.NewHabitRepository(db),
 	)
 }
