@@ -10,6 +10,7 @@ import (
 type GoalService interface {
 	CreateGoal(goal *models.Goal) error
 	ListGoalsByArea(areaID string) ([]*models.Goal, error)
+	GetGoalByID(id string) (*models.Goal, error)
 	UpdateGoal(goal *models.Goal) error
 	DeleteGoal(id string) error
 }
@@ -29,6 +30,13 @@ func (s *goalService) CreateGoal(goal *models.Goal) error {
 		return err
 	}
 	return s.goalRepo.Create(goal)
+}
+
+func (s *goalService) GetGoalByID(id string) (*models.Goal, error) {
+	if err := dc.ValidateID(id); err != nil {
+		return nil, err
+	}
+	return s.goalRepo.FindByID(id)
 }
 
 func (s *goalService) ListGoalsByArea(areaID string) ([]*models.Goal, error) {

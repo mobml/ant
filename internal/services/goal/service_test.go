@@ -83,6 +83,28 @@ func TestGoalService_CreateGoal_Invalid(t *testing.T) {
 	}
 }
 
+func TestGoalService_GetGoalByID_OK(t *testing.T) {
+	repo := &mockGoalRepository{}
+	service := NewGoalService(repo)
+
+	_, err := service.GetGoalByID("goal123")
+
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+func TestGoalService_GetGoalByID_InvalidID(t *testing.T) {
+	repo := &mockGoalRepository{}
+	service := NewGoalService(repo)
+
+	_, err := service.GetGoalByID("")
+
+	if err == nil {
+		t.Fatal("expected validation error")
+	}
+}
+
 func TestGoalService_ListGoalsByArea_OK(t *testing.T) {
 	repo := &mockGoalRepository{
 		goals: []*models.Goal{
