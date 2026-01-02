@@ -185,15 +185,28 @@ func TestHabitRepository_Update(t *testing.T) {
 	}
 }
 
+// correct the TestHabitRepository_Delete to test deletion of associated habit schedules as well
 func TestHabitRepository_Delete(t *testing.T) {
 	db, mock, _ := sqlmock.New()
 	defer db.Close()
 
 	repo := NewHabitRepository(db)
 
+	mock.ExpectBegin()
+
+	mock.ExpectExec("DELETE FROM habit_schedules WHERE habit_id = \\?").
+		WithArgs("habit1").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	mock.ExpectExec("DELETE FROM habit_logs WHERE habit_id = \\?").
+		WithArgs("habit1").
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
 	mock.ExpectExec("DELETE FROM habits WHERE id = \\?").
 		WithArgs("habit1").
 		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	mock.ExpectCommit()
 
 	err := repo.Delete("habit1")
 	if err != nil {

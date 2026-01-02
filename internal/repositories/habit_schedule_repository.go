@@ -3,9 +3,10 @@ package repositories
 import (
 	"database/sql"
 	"fmt"
+	"time"
+
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"github.com/mobml/ant/internal/models"
-	"time"
 )
 
 type HabitScheduleRepository interface {

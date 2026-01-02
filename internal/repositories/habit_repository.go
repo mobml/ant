@@ -200,14 +200,30 @@ func (r *habitRepository) Update(h *models.Habit) error {
 	return nil
 }
 
+//make this code transactional to delete associated habit schedules as well
+
 func (r *habitRepository) Delete(id string) error {
-	query := "DELETE FROM habits WHERE id = ?"
-
-	_, err := r.db.Exec(query, id)
-
+	tx, err := r.db.Begin()
 	if err != nil {
-		return fmt.Errorf("failed deleting habit '%s': %w", id, err)
+		return fmt.Errorf("begin tx: %w", err)
+	}
+	defer tx.Rollback()
+
+	deletes := []struct {
+		query string
+		label string
+	}{
+		{"DELETE FROM habit_schedules WHERE habit_id = ?", "habit_schedules"},
+		{"DELETE FROM habit_logs WHERE habit_id = ?", "habit_logs"},
+		{"DELETE FROM habits WHERE id = ?", "habits"},
 	}
 
-	return nil
+	for _, d := range deletes {
+		_, err := tx.Exec(d.query, id)
+		if err != nil {
+			return fmt.Errorf("delete from %s failed: %w", d.label, err)
+		}
+	}
+
+	return tx.Commit()
 }

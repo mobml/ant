@@ -6,8 +6,4 @@ CREATE TABLE IF NOT EXISTS habit_logs (
     note TEXT,
     created_at TIMESTAMP DEFAULT current_timestamp,
     updated_at TIMESTAMP DEFAULT current_timestamp,
-    FOREIGN KEY (habit_id) REFERENCES habits(id)
 );
-
-CREATE INDEX IF NOT EXISTS idx_habit_logs_habit_date
-    ON habit_logs (habit_id, log_date);
