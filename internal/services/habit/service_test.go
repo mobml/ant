@@ -25,6 +25,11 @@ func (m *mockHabitRepository) CreateHabit(habit *models.Habit, days []int) error
 	return nil
 }
 
+func (m *mockHabitRepository) CreateHabitSchedule(id string, days []int) error {
+	m.createCalled = true
+	return nil
+}
+
 func (m *mockHabitRepository) List() ([]*models.Habit, error) {
 	m.listCalled = true
 	return m.habits, nil
@@ -40,6 +45,11 @@ func (m *mockHabitRepository) Update(habit *models.Habit) error {
 }
 
 func (m *mockHabitRepository) Delete(id string) error {
+	m.deleteCalled = true
+	return nil
+}
+
+func (m *mockHabitRepository) DeleteHabitSchedules(id string) error {
 	m.deleteCalled = true
 	return nil
 }
@@ -104,6 +114,28 @@ func TestHabitService_CreateHabit_Invalid(t *testing.T) {
 
 	if repo.createCalled {
 		t.Fatal("Create should NOT be called when validation fails")
+	}
+}
+
+func TestHabitService_GetHabitByID_OK(t *testing.T) {
+	repo := &mockHabitRepository{}
+	service := NewHabitService(repo)
+
+	_, err := service.GetHabitByID("habit123")
+
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+func TestHabitService_GetHabitByID_InvalidID(t *testing.T) {
+	repo := &mockHabitRepository{}
+	service := NewHabitService(repo)
+
+	_, err := service.GetHabitByID("")
+
+	if err == nil {
+		t.Fatal("expected validation error")
 	}
 }
 

@@ -10,8 +10,10 @@ import (
 type HabitService interface {
 	CreateHabit(habit *models.Habit) error
 	CreateHabitWithSchedule(habit *models.Habit, days []int) error
+	GetHabitByID(id string) (*models.Habit, error)
 	ListHabits() ([]*models.Habit, error)
 	UpdateHabit(habit *models.Habit) error
+	UpdateHabitWithSchedule(habit *models.Habit, days []int) error
 	DeleteHabit(id string) error
 }
 
@@ -39,6 +41,13 @@ func (hs *habitService) CreateHabitWithSchedule(habit *models.Habit, days []int)
 	return hs.habitRepo.CreateHabit(habit, days)
 }
 
+func (hs *habitService) GetHabitByID(id string) (*models.Habit, error) {
+	if err := dc.ValidateID(id); err != nil {
+		return nil, err
+	}
+	return hs.habitRepo.FindByID(id)
+}
+
 func (hs *habitService) ListHabits() ([]*models.Habit, error) {
 	return hs.habitRepo.List()
 }
@@ -60,4 +69,28 @@ func (hs *habitService) DeleteHabit(id string) error {
 		return err
 	}
 	return hs.habitRepo.Delete(id)
+}
+
+func (hs *habitService) UpdateHabitWithSchedule(habit *models.Habit, days []int) error {
+	if err := dh.ValidateHabit(habit); err != nil {
+		return err
+	}
+
+	if err := dc.ValidateID(habit.ID); err != nil {
+		return err
+	}
+
+	if err := hs.habitRepo.DeleteHabitSchedules(habit.ID); err != nil {
+		return err
+	}
+
+	if err := hs.habitRepo.Update(habit); err != nil {
+		return err
+	}
+
+	if err := hs.habitRepo.CreateHabitSchedule(habit.ID, days); err != nil {
+		return err
+	}
+
+	return nil
 }

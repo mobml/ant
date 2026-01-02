@@ -12,10 +12,12 @@ import (
 type HabitRepository interface {
 	Create(h *models.Habit) error
 	CreateHabit(h *models.Habit, days []int) error
+	CreateHabitSchedule(id string, days []int) error
 	List() ([]*models.Habit, error)
 	FindByID(id string) (*models.Habit, error)
 	Update(h *models.Habit) error
 	Delete(id string) error
+	DeleteHabitSchedules(id string) error
 }
 
 type habitRepository struct {
@@ -104,6 +106,38 @@ func (r *habitRepository) CreateHabit(h *models.Habit, days []int) error {
 		}
 
 		if _, err = stmt.Exec(sID, h.ID, day); err != nil {
+			return fmt.Errorf("failed to insert schedule for day %d: %w", day, err)
+		}
+	}
+
+	return tx.Commit()
+}
+
+func (r *habitRepository) CreateHabitSchedule(id string, days []int) error {
+
+	tx, err := r.db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+
+	defer tx.Rollback()
+
+	stmt, err := tx.Prepare(`
+		INSERT INTO habit_schedules (id, habit_id, day_of_week)
+		VALUES (?, ?, ?)
+	`)
+	if err != nil {
+		return fmt.Errorf("failed to prepare statement: %w", err)
+	}
+	defer stmt.Close()
+
+	for _, day := range days {
+		sID, err := gonanoid.New(8)
+		if err != nil {
+			return fmt.Errorf("failed to generate schedule id: %w", err)
+		}
+
+		if _, err = stmt.Exec(sID, id, day); err != nil {
 			return fmt.Errorf("failed to insert schedule for day %d: %w", day, err)
 		}
 	}
@@ -200,8 +234,6 @@ func (r *habitRepository) Update(h *models.Habit) error {
 	return nil
 }
 
-//make this code transactional to delete associated habit schedules as well
-
 func (r *habitRepository) Delete(id string) error {
 	tx, err := r.db.Begin()
 	if err != nil {
@@ -226,4 +258,15 @@ func (r *habitRepository) Delete(id string) error {
 	}
 
 	return tx.Commit()
+}
+
+func (r *habitRepository) DeleteHabitSchedules(id string) error {
+	query := "DELETE FROM habit_schedules WHERE habit_id = ?"
+
+	_, err := r.db.Exec(query, id)
+	if err != nil {
+		return fmt.Errorf("failed deleting habit schedule '%s': %w", id, err)
+	}
+
+	return nil
 }
