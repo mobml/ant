@@ -9,6 +9,7 @@ import (
 
 type HabitService interface {
 	CreateHabit(habit *models.Habit) error
+	CreateHabitWithSchedule(habit *models.Habit, days []int) error
 	ListHabits() ([]*models.Habit, error)
 	UpdateHabit(habit *models.Habit) error
 	DeleteHabit(id string) error
@@ -29,6 +30,13 @@ func (hs *habitService) CreateHabit(habit *models.Habit) error {
 		return err
 	}
 	return hs.habitRepo.Create(habit)
+}
+
+func (hs *habitService) CreateHabitWithSchedule(habit *models.Habit, days []int) error {
+	if err := dh.ValidateHabit(habit); err != nil {
+		return err
+	}
+	return hs.habitRepo.CreateHabit(habit, days)
 }
 
 func (hs *habitService) ListHabits() ([]*models.Habit, error) {

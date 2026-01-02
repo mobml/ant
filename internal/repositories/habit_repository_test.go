@@ -9,6 +9,62 @@ import (
 	"github.com/mobml/ant/internal/models"
 )
 
+// create a test for CreateHabit methdod
+func TestHabitRepository_CreateHabit(t *testing.T) {
+	db, mock, _ := sqlmock.New()
+	defer db.Close()
+
+	repo := NewHabitRepository(db)
+
+	h := &models.Habit{
+		GoalID:      "goal1",
+		Name:        "Drink water",
+		Description: "8 glasses a day",
+		MeasureType: models.MeasureInteger,
+		MeasureUnit: "glasses",
+	}
+
+	days := []int{1, 3, 5} // Monday, Wednesday, Friday
+
+	mock.ExpectBegin()
+
+	mock.ExpectExec(regexp.QuoteMeta(`
+		INSERT INTO habits (id, goal_id, name, description, measure_type, measure_unit)
+		VALUES (?, ?, ?, ?, ?, ?)
+	`)).
+		WithArgs(
+			sqlmock.AnyArg(),
+			h.GoalID,
+			h.Name,
+			h.Description,
+			h.MeasureType,
+			h.MeasureUnit,
+		).
+		WillReturnResult(sqlmock.NewResult(1, 1))
+
+	prep := mock.ExpectPrepare(regexp.QuoteMeta(`
+    INSERT INTO habit_schedules (id, habit_id, day_of_week)
+    VALUES (?, ?, ?)
+	`))
+
+	for _, day := range days {
+		prep.ExpectExec().
+			WithArgs(
+				sqlmock.AnyArg(),
+				sqlmock.AnyArg(),
+				day,
+			).
+			WillReturnResult(sqlmock.NewResult(1, 1))
+	}
+
+	mock.ExpectCommit()
+
+	err := repo.CreateHabit(h, days)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
 func TestHabitRepository_Create(t *testing.T) {
 	db, mock, _ := sqlmock.New()
 	defer db.Close()

@@ -11,6 +11,7 @@ import (
 
 type HabitRepository interface {
 	Create(h *models.Habit) error
+	CreateHabit(h *models.Habit, days []int) error
 	List() ([]*models.Habit, error)
 	FindByID(id string) (*models.Habit, error)
 	Update(h *models.Habit) error
@@ -52,6 +53,62 @@ func (r *habitRepository) Create(h *models.Habit) error {
 	}
 
 	return nil
+}
+
+func (r *habitRepository) CreateHabit(h *models.Habit, days []int) error {
+	tx, err := r.db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+
+	defer tx.Rollback()
+
+	id, err := gonanoid.New(8)
+	if err != nil {
+		return fmt.Errorf("failed to create id")
+	}
+	h.ID = id
+
+	query := `
+		INSERT INTO habits (id, goal_id, name, description, measure_type, measure_unit)
+		VALUES (?, ?, ?, ?, ?, ?)
+	`
+
+	_, err = tx.Exec(
+		query,
+		h.ID,
+		h.GoalID,
+		h.Name,
+		h.Description,
+		h.MeasureType,
+		h.MeasureUnit,
+	)
+
+	if err != nil {
+		return fmt.Errorf("failed to create habit: %w", err)
+	}
+
+	stmt, err := tx.Prepare(`
+		INSERT INTO habit_schedules (id, habit_id, day_of_week)
+		VALUES (?, ?, ?)
+	`)
+	if err != nil {
+		return fmt.Errorf("failed to prepare statement: %w", err)
+	}
+	defer stmt.Close()
+
+	for _, day := range days {
+		sID, err := gonanoid.New(8)
+		if err != nil {
+			return fmt.Errorf("failed to generate schedule id: %w", err)
+		}
+
+		if _, err = stmt.Exec(sID, h.ID, day); err != nil {
+			return fmt.Errorf("failed to insert schedule for day %d: %w", day, err)
+		}
+	}
+
+	return tx.Commit()
 }
 
 func (r *habitRepository) List() ([]*models.Habit, error) {

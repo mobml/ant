@@ -20,6 +20,11 @@ func (m *mockHabitRepository) Create(habit *models.Habit) error {
 	return nil
 }
 
+func (m *mockHabitRepository) CreateHabit(habit *models.Habit, days []int) error {
+	m.createCalled = true
+	return nil
+}
+
 func (m *mockHabitRepository) List() ([]*models.Habit, error) {
 	m.listCalled = true
 	return m.habits, nil
@@ -57,6 +62,29 @@ func TestHabitService_CreateHabit_OK(t *testing.T) {
 
 	if !repo.createCalled {
 		t.Fatal("expected Create to be called")
+	}
+}
+
+func TestHabitService_CreateHabitWithSchedule_OK(t *testing.T) {
+	repo := &mockHabitRepository{}
+	service := NewHabitService(repo)
+
+	habit := &models.Habit{
+		GoalID:      "goal123",
+		Name:        "Exercise",
+		MeasureType: models.MeasureInteger,
+	}
+
+	days := []int{1, 3, 5} // Monday, Wednesday, Friday
+
+	err := service.CreateHabitWithSchedule(habit, days)
+
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	if !repo.createCalled {
+		t.Fatal("expected CreateHabit to be called")
 	}
 }
 
