@@ -7,14 +7,16 @@ import (
 	as "github.com/mobml/ant/internal/services/area"
 	gs "github.com/mobml/ant/internal/services/goal"
 	hs "github.com/mobml/ant/internal/services/habit"
+	hls "github.com/mobml/ant/internal/services/habit_log"
 	ps "github.com/mobml/ant/internal/services/plan"
 )
 
 var (
-	PlanService  ps.PlanService
-	AreaService  as.AreaService
-	GoalService  gs.GoalService
-	HabitService hs.HabitService
+	PlanService     ps.PlanService
+	AreaService     as.AreaService
+	GoalService     gs.GoalService
+	HabitService    hs.HabitService
+	HabitLogService hls.HabitLogService
 )
 
 func InitServices() {
@@ -34,5 +36,9 @@ func InitServices() {
 
 	HabitService = hs.NewHabitService(
 		repositories.NewHabitRepository(db),
+	)
+
+	HabitLogService = hls.NewHabitLogService(
+		repositories.NewHabitLogRepository(db),
 	)
 }

@@ -12,9 +12,9 @@ func ValidateHabitLog(h *models.HabitLog) error {
 	if strings.TrimSpace(h.HabitID) == "" {
 		return common.ErrIDRequired
 	}
-	if h.LogDate.IsZero() {
+	/*if h.LogDate.IsZero() {
 		return ErrLogDateRequired
-	}
+	}*/
 
 	if !isValidFloat(h.Value) {
 		return ErrValueRequired
