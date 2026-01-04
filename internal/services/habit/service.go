@@ -1,6 +1,8 @@
 package habit
 
 import (
+	"time"
+
 	dc "github.com/mobml/ant/internal/domain/common"
 	dh "github.com/mobml/ant/internal/domain/habit"
 	"github.com/mobml/ant/internal/models"
@@ -11,6 +13,7 @@ type HabitService interface {
 	CreateHabit(habit *models.Habit) error
 	CreateHabitWithSchedule(habit *models.Habit, days []int) error
 	GetHabitByID(id string) (*models.Habit, error)
+	HabitsForToday() ([]models.HabitWithStatus, error)
 	ListHabits() ([]*models.Habit, error)
 	UpdateHabit(habit *models.Habit) error
 	UpdateHabitWithSchedule(habit *models.Habit, days []int) error
@@ -46,6 +49,21 @@ func (hs *habitService) GetHabitByID(id string) (*models.Habit, error) {
 		return nil, err
 	}
 	return hs.habitRepo.FindByID(id)
+}
+
+func (hs *habitService) HabitsForToday() ([]models.HabitWithStatus, error) {
+	now := time.Now()
+
+	day := int(now.Weekday())
+	if day == 0 {
+		day = 7
+	}
+
+	habits, err := hs.habitRepo.HabitsForToday(day)
+	if err != nil {
+		return nil, err
+	}
+	return habits, nil
 }
 
 func (hs *habitService) ListHabits() ([]*models.Habit, error) {

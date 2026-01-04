@@ -14,3 +14,10 @@ type Habit struct {
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
+
+type HabitWithStatus struct {
+	ID          []byte
+	Name        string
+	Description string
+	WorkedToday bool
+}

@@ -35,6 +35,10 @@ func (m *mockHabitRepository) List() ([]*models.Habit, error) {
 	return m.habits, nil
 }
 
+func (m *mockHabitRepository) HabitsForToday(day int) ([]models.HabitWithStatus, error) {
+	return []models.HabitWithStatus{}, nil
+}
+
 func (m *mockHabitRepository) FindByID(id string) (*models.Habit, error) {
 	return nil, nil
 }

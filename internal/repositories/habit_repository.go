@@ -13,6 +13,7 @@ type HabitRepository interface {
 	Create(h *models.Habit) error
 	CreateHabit(h *models.Habit, days []int) error
 	CreateHabitSchedule(id string, days []int) error
+	HabitsForToday(day int) ([]models.HabitWithStatus, error)
 	List() ([]*models.Habit, error)
 	FindByID(id string) (*models.Habit, error)
 	Update(h *models.Habit) error
@@ -179,6 +180,38 @@ func (r *habitRepository) List() ([]*models.Habit, error) {
 		return nil, fmt.Errorf("row iteration failed: %w", err)
 	}
 
+	return habits, nil
+}
+
+func (r *habitRepository) HabitsForToday(day int) ([]models.HabitWithStatus, error) {
+	rows, err := r.db.Query(`
+		SELECT
+			h.id,
+			h.name,
+			h.description,
+			CASE WHEN hl.id IS NULL THEN false ELSE true END AS worked_today
+		FROM habits h
+		JOIN habit_schedules hs ON hs.habit_id = h.id
+		LEFT JOIN habit_logs hl
+		  ON hl.habit_id = h.id
+		 AND DATE(hl.log_date) = CURRENT_DATE
+		WHERE hs.day_of_week = ?
+		ORDER BY worked_today DESC, h.name
+	`, day)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var habits []models.HabitWithStatus
+	for rows.Next() {
+		var h models.HabitWithStatus
+		if err := rows.Scan(&h.ID, &h.Name, &h.Description, &h.WorkedToday); err != nil {
+			return nil, err
+		}
+		habits = append(habits, h)
+	}
 	return habits, nil
 }
 
