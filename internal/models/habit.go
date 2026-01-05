@@ -18,6 +18,8 @@ type Habit struct {
 type HabitWithStatus struct {
 	ID          string
 	Name        string
-	Description string
+	AreaName    string
+	GoalName    string
+	PlanName    string
 	WorkedToday bool
 }

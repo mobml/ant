@@ -29,7 +29,7 @@ func runHabitToday(cmd *cobra.Command, args []string) error {
 		if habit.WorkedToday {
 			status = "Completed"
 		}
-		cmd.Printf("- %s[%s]: %s [%s]\n", habit.Name, habit.ID, habit.Description, status)
+		cmd.Printf("- %s[%s]> %s · %s · %s ~> [%s]\n", habit.Name, habit.ID, habit.PlanName, habit.AreaName, habit.GoalName, status)
 	}
 
 	return nil

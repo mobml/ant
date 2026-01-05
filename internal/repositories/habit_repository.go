@@ -186,9 +186,13 @@ func (r *habitRepository) List() ([]*models.Habit, error) {
 func (r *habitRepository) HabitsForToday(day int) ([]models.HabitWithStatus, error) {
 	rows, err := r.db.Query(`
 		SELECT
-  h.id,
-  h.name,
-  h.description,
+  h.id    AS habit_id,
+  h.name  AS habit_name,
+
+  a.name  AS area_name,
+  g.name  AS goal_name,
+  p.name  AS plan_name,
+
   EXISTS (
     SELECT 1
     FROM habit_logs hl
@@ -196,11 +200,27 @@ func (r *habitRepository) HabitsForToday(day int) ([]models.HabitWithStatus, err
       AND hl.log_date >= CURRENT_DATE
       AND hl.log_date < CURRENT_DATE + INTERVAL 1 DAY
   ) AS worked_today
+
 FROM habits h
+JOIN goals g ON g.id = h.goal_id
+JOIN areas a ON a.id = g.area_id
+JOIN plans p ON p.id = a.plan_id
+
 JOIN habit_schedules hs ON hs.habit_id = h.id
 WHERE hs.day_of_week = ?
-GROUP BY h.id, h.name, h.description
-ORDER BY worked_today DESC, h.name;
+
+GROUP BY
+  h.id, h.name,
+  a.name,
+  g.name,
+  p.name
+
+ORDER BY
+  worked_today DESC,
+  p.name,
+  a.name,
+  g.name,
+  h.name;
 
 
 	`, day)
@@ -213,7 +233,7 @@ ORDER BY worked_today DESC, h.name;
 	var habits []models.HabitWithStatus
 	for rows.Next() {
 		var h models.HabitWithStatus
-		if err := rows.Scan(&h.ID, &h.Name, &h.Description, &h.WorkedToday); err != nil {
+		if err := rows.Scan(&h.ID, &h.Name, &h.AreaName, &h.GoalName, &h.PlanName, &h.WorkedToday); err != nil {
 			return nil, err
 		}
 		habits = append(habits, h)
