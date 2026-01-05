@@ -5,7 +5,6 @@ import (
 	"embed"
 	"fmt"
 	"io/fs"
-	"log"
 	"sort"
 	"strings"
 )
@@ -60,7 +59,5 @@ func Migrate(db *sql.DB) error {
 			return fmt.Errorf("error executing migrations %s: %w", e.Name(), err)
 		}
 	}
-
-	log.Println("Miration completed correctly")
 	return nil
 }
