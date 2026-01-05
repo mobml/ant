@@ -16,7 +16,7 @@ type Habit struct {
 }
 
 type HabitWithStatus struct {
-	ID          []byte
+	ID          string
 	Name        string
 	Description string
 	WorkedToday bool

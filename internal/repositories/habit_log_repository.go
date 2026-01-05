@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/matoous/go-nanoid/v2"
+	gonanoid "github.com/matoous/go-nanoid/v2"
 	"github.com/mobml/ant/internal/models"
 )
 
@@ -33,6 +33,8 @@ func (r *habitLogRepository) Create(h *models.HabitLog) error {
     `
 	id, err := gonanoid.New(8)
 
+	today := time.Now().In(time.Local).Format("2006-01-02")
+
 	if err != nil {
 		return fmt.Errorf("failed to create id")
 	}
@@ -41,7 +43,7 @@ func (r *habitLogRepository) Create(h *models.HabitLog) error {
 		query,
 		id,
 		h.HabitID,
-		time.Now(),
+		today,
 		h.Value,
 		h.Note,
 	)

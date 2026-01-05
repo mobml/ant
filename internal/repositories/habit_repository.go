@@ -186,17 +186,23 @@ func (r *habitRepository) List() ([]*models.Habit, error) {
 func (r *habitRepository) HabitsForToday(day int) ([]models.HabitWithStatus, error) {
 	rows, err := r.db.Query(`
 		SELECT
-			h.id,
-			h.name,
-			h.description,
-			CASE WHEN hl.id IS NULL THEN false ELSE true END AS worked_today
-		FROM habits h
-		JOIN habit_schedules hs ON hs.habit_id = h.id
-		LEFT JOIN habit_logs hl
-		  ON hl.habit_id = h.id
-		 AND DATE(hl.log_date) = CURRENT_DATE
-		WHERE hs.day_of_week = ?
-		ORDER BY worked_today DESC, h.name
+  h.id,
+  h.name,
+  h.description,
+  EXISTS (
+    SELECT 1
+    FROM habit_logs hl
+    WHERE hl.habit_id = h.id
+      AND hl.log_date >= CURRENT_DATE
+      AND hl.log_date < CURRENT_DATE + INTERVAL 1 DAY
+  ) AS worked_today
+FROM habits h
+JOIN habit_schedules hs ON hs.habit_id = h.id
+WHERE hs.day_of_week = ?
+GROUP BY h.id, h.name, h.description
+ORDER BY worked_today DESC, h.name;
+
+
 	`, day)
 
 	if err != nil {

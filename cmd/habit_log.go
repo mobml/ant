@@ -23,7 +23,7 @@ func runHabitMark(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	fmt.Println("Creating habit log for Habit ID:", habitLog.ID)
+	fmt.Println("Creating habit log for Habit ID:", habitLog.HabitID)
 
 	if wizard.NeedsHabitLogWizard(&habitLog) {
 		cmd.Println("Some required fields are missing. Launching interactive wizard...")
